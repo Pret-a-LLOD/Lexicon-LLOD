@@ -1,0 +1,43 @@
+openapi: '3.0.0'
+info:
+  title: Lexicon LLOD linking
+  description: there will be a description
+  version: 0.5.0
+paths:
+  /trans-to-bnet:
+    get:
+      operationId: api.enrich_rdf
+      summary: Returns Turtle with Babelnet linking based on the translation URI
+      parameters:
+        - in: query
+          name: bnet-endpoint
+          required: false
+          schema:
+            type: string
+          default: https://babelnet.org/sparql/
+        - in: query
+          name: apertium-endpoint
+          required: false
+          schema:
+            type: string
+          default: http://dbserver.acoli.cs.uni-frankfurt.de:5005/apertium/sparql
+        - in: query
+          name: bnet-api-key
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: trans
+          required: true
+          schema:
+            type: string
+          example: 'http://linguistic.linkeddata.es/id/apertium/tranSetEN-ES/key_tecla-n-en-sense-tecla_key-n-es-sense-trans'
+      responses:
+        '200':
+          description: Success
+          content:
+            text/turtle:
+              schema:
+                type: string
+        '204':
+          description: No Babelnet links were found

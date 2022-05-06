@@ -1,0 +1,6 @@
+flask
+flask-swagger-ui
+gunicorn
+py_babelnet
+rdflib
+SPARQLWrapper

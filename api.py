@@ -10,8 +10,6 @@ import os
 from flask import Flask, request, jsonify, send_file, redirect
 from flask_swagger_ui import get_swaggerui_blueprint
 
-BN_API = '7e8556ae-5b7f-4304-acbc-f02761edffe0'
-trans= '<http://linguistic.linkeddata.es/id/apertium/tranSetPT-GL/Ocidente_Occidente-np-pt-sense-Occidente_Ocidente-np-gl-sense-trans>' 
 
 # ---- init things ----
 app = Flask(__name__)

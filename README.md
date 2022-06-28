@@ -12,6 +12,8 @@ The input to this method is either a translation set URI, two written representa
 
 Besides, BabelNet info can be accessed in two different ways. The first one uses BN SPARQL Endpoint (https://babelnet.org/sparql/). It is executed if BN_API is not provided. The second one uses py_babelnet library and requires and API Key. The API Key can be obtained by registering to BabelNet. Notices, though, that there is a limit in the number of queries to BabelNet that one can run per day. 
 
+The method assumes that Apertium RDF is exposed at http://dbserver.acoli.cs.uni-frankfurt.de:5005/apertium/sparql
+
 ## License
 
 Lexicon-LLOD was developed by the SID group (University of Zaragoza).

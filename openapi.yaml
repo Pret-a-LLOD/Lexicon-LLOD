@@ -28,10 +28,40 @@ paths:
             type: string
         - in: query
           name: trans
-          required: true
+          required: false
           schema:
             type: string
           example: 'http://linguistic.linkeddata.es/id/apertium/tranSetEN-ES/key_tecla-n-en-sense-tecla_key-n-es-sense-trans'
+        - in: query
+          name: lex_entry_a
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: lex_entry_b
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: written_rep_a
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: written_rep_b
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: l1
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: l2
+          required: false
+          schema:
+            type: string
       responses:
         '200':
           description: Success

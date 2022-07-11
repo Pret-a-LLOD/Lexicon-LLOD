@@ -4,7 +4,7 @@ WORKDIR /bnet
 # create the app user
 RUN addgroup --system bnet && adduser --system --group bnet
 
-COPY ./ /bnet
+COPY api.py openapi.yaml requirements.txt /bnet
 
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1

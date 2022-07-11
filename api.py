@@ -10,13 +10,15 @@ import os
 from flask import Flask, request, jsonify, send_file, redirect
 from flask_swagger_ui import get_swaggerui_blueprint
 
+trans= '<http://linguistic.linkeddata.es/id/apertium/tranSetPT-GL/Ocidente_Occidente-np-pt-sense-Occidente_Ocidente-np-gl-sense-trans>'
+
 
 # ---- init things ----
 app = Flask(__name__)
 swagger_ui = get_swaggerui_blueprint('/swagger', '/static/openapi.yaml')
 app.register_blueprint(swagger_ui)
 
-def main (lex_entry_a='', lex_entry_b='', written_rep_a='', written_rep_b='', trans='', l1='', l2='', 
+def main (trans, lex_entry_a='', lex_entry_b='', written_rep_a='', written_rep_b='', l1='', l2='', 
           AP_query_limit = 3, 
           BN_endpoint = "https://babelnet.org/sparql/", 
           AP_endpoint = "http://dbserver.acoli.cs.uni-frankfurt.de:5005/apertium/sparql", 
@@ -36,7 +38,7 @@ def main (lex_entry_a='', lex_entry_b='', written_rep_a='', written_rep_b='', tr
     #1. Access APERTIUM RDF and extract data from it. 
     if lex_entry_a != '':
         sparql = SPARQLWrapper(AP_endpoint)
-        sparql.setQuery("""
+        sparql_query = """
         # Get all the direct translations belonging to a translation set:
         # source and target written representations along with all the 
         # intermediate elements and POS 
@@ -49,7 +51,7 @@ def main (lex_entry_a='', lex_entry_b='', written_rep_a='', written_rep_b='', tr
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
         
         SELECT DISTINCT ?written_rep_a  ?sense_a ?sense_b  ?written_rep_b ?POS ?trans
-        FROM <http://linguistic.linkeddata.es/id/apertium-ud>
+        FROM <http://linguistic.linkeddata.es/id/apertium/>
         WHERE {
            
           #retrieve translation set
@@ -78,7 +80,9 @@ def main (lex_entry_a='', lex_entry_b='', written_rep_a='', written_rep_b='', tr
           <"""+lex_entry_b+""">  lexinfo:partOfSpeech ?POS .
         } 
         LIMIT """+str(AP_query_limit)+"""
-        """)
+        """
+
+        sparql.setQuery(sparql_query)
         sparql.setReturnFormat(JSON)
         AP_res = sparql.queryAndConvert()
         
@@ -93,7 +97,7 @@ def main (lex_entry_a='', lex_entry_b='', written_rep_a='', written_rep_b='', tr
     
     elif written_rep_a != '':
         sparql = SPARQLWrapper(AP_endpoint)
-        sparql.setQuery("""
+        sparql_query = """
         # Get all the direct translations belonging to a translation set:
         # source and target written representations along with all the 
         # intermediate elements and POS 
@@ -106,7 +110,7 @@ def main (lex_entry_a='', lex_entry_b='', written_rep_a='', written_rep_b='', tr
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
         SELECT DISTINCT  ?sense_a ?sense_b ?lex_entry_a ?lex_entry_b ?POS ?trans
-        FROM <http://linguistic.linkeddata.es/id/apertium-ud>
+        FROM <http://linguistic.linkeddata.es/id/apertium/>
         WHERE {
            
           #retrieve translation set
@@ -135,7 +139,9 @@ def main (lex_entry_a='', lex_entry_b='', written_rep_a='', written_rep_b='', tr
           ?lex_entry_b  lexinfo:partOfSpeech ?POS .
         } 
         LIMIT """+str(AP_query_limit)+"""
-        """)
+        """
+
+        sparql.setQuery(sparql_query)
         sparql.setReturnFormat(JSON)
         AP_res = sparql.queryAndConvert()
         try:
@@ -162,7 +168,7 @@ def main (lex_entry_a='', lex_entry_b='', written_rep_a='', written_rep_b='', tr
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
         SELECT DISTINCT ?written_rep_a ?lex_entry_a ?sense_a ?sense_b ?lex_entry_b ?written_rep_b ?POS ?l1 ?l2
-        FROM <http://linguistic.linkeddata.es/id/apertium-ud>
+        FROM <http://linguistic.linkeddata.es/id/apertium/>
         WHERE {
            
           #retrieve translation set
@@ -371,9 +377,10 @@ def main (lex_entry_a='', lex_entry_b='', written_rep_a='', written_rep_b='', tr
 
 @app.route('/trans-to-bnet')
 def enrich_rdf():
-    val = main(request.values.get('trans', trans), request.values.get('lex_entry_a'),
-         request.values.get('lex_entry_b'), request.values.get('written_rep_a'), request.values.get('written_rep_b'),
-         request.values.get('l1'), request.values.get('l2'), AP_query_limit = 3, 
+    val = main(request.values.get('trans', trans), request.values.get('lex_entry_a', ''),
+         request.values.get('lex_entry_b', ''), 
+         request.values.get('written_rep_a', ''), request.values.get('written_rep_b', ''),
+         request.values.get('l1', ''), request.values.get('l2', ''), AP_query_limit = 3, 
          BN_endpoint = request.values.get('bnet-endpoint', "https://babelnet.org/sparql/"), 
          AP_endpoint = request.values.get('apertium-endpoint', "http://dbserver.acoli.cs.uni-frankfurt.de:5005/apertium/sparql"), 
          BN_API = request.values.get('bnet-api-key', ''))
